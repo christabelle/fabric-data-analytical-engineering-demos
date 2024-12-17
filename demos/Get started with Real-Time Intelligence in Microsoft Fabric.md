@@ -52,7 +52,7 @@ For this demo, we will be using some sample data to demo how to use the KQL Quer
     ```kql
     Weather
     | take 10
-    | project StartTime, EndTime, EventType, EventNarrative, DamageProperty
+    | project StartTime, EndTime, EventType, State, EventNarrative, DamageProperty
     ```
 
     ![Second Query](../images/kql-second-query.png)
@@ -70,13 +70,13 @@ For this demo, we will be using some sample data to demo how to use the KQL Quer
     // Filter the Thunderstorm Wind events
 
     Weather
-    | project StartTime, EndTime, EventType, EventNarrative, DamageProperty
+    | project StartTime, EndTime, EventType, State, EventNarrative, DamageProperty
     | where EventType == "Thunderstorm Wind"
     ```
 
     ![Third Query](../images/kql-third-query.png)
 
-8. And finally, don't forget to check out the grouping predicate! It looks quite different from its SQL equivalent.
+8. And don't forget to check out the grouping predicate! It looks quite different from its SQL equivalent.
 
     ```kql
     // Group by EventType and Aggregate different metrics
@@ -90,3 +90,19 @@ For this demo, we will be using some sample data to demo how to use the KQL Quer
     ```
 
     ![Fourth Query](../images/kql-fourth-query.png)
+
+9. Finally, we can also render the data as a visualization.
+
+    ```kql
+    Weather
+    | where EventType == "Tornado"
+    | summarize 
+        TotalInjuries = sum(InjuriesDirect) + sum(InjuriesIndirect),
+        TotalDeaths = sum(DeathsDirect) + sum(DeathsIndirect),
+        DamageProperty = sum(DamageProperty)
+        by bin(StartTime, 1m)
+    | render timechart
+    ```
+
+    ![Fifth Query](../images/kql-fifth-query.png)
+
